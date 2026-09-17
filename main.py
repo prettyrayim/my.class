@@ -492,3 +492,53 @@ st.dataframe(
     use_container_width=True,
     hide_index=True
 )
+# ==============================
+# 5. 장르별 총 관객 수 상자 그림
+# ==============================
+st.subheader("5️⃣ 장르별 총 관객 수 분포")
+
+# 영화가 10편 이상인 장르만 선택
+genre_counts = df["genre"].value_counts()
+selected_genres = genre_counts[genre_counts >= 10].index
+
+box_df = df[df["genre"].isin(selected_genres)].copy()
+box_df = box_df.dropna(subset=["total_audi"])
+
+fig5 = px.box(
+    box_df,
+    x="genre",
+    y="total_audi",
+    color="genre",
+    points="outliers",
+    hover_name="movieNm",
+    title="영화가 10편 이상인 장르별 총 관객 수 분포",
+    labels={
+        "genre": "장르",
+        "total_audi": "총 관객 수"
+    }
+)
+
+fig5.update_traces(
+    hovertemplate=(
+        "<b>%{hovertext}</b><br>"
+        "총 관객: %{y:,.0f}명"
+        "<extra></extra>"
+    )
+)
+
+fig5.update_layout(
+    height=650,
+    xaxis_title="장르",
+    yaxis_title="총 관객 수",
+    showlegend=False
+)
+
+st.plotly_chart(fig5, use_container_width=True)
+
+# 그래프에서 알 수 있는 것
+with st.container(border=True):
+    st.markdown("### 💡 이 그래프로 알 수 있는 것")
+    st.write(
+        "영화가 10편 이상인 장르끼리 총 관객 수의 중앙값과 분포, "
+        "그리고 다른 영화보다 유난히 관객이 많은 이상치를 비교할 수 있다."
+    )
