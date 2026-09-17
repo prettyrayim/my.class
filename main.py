@@ -39,6 +39,7 @@ def load_data():
     # --------------------------------------------------------
     # 개봉일
     # --------------------------------------------------------
+
     df["openDt"] = (
         df["openDt"]
         .astype(str)
@@ -50,6 +51,7 @@ def load_data():
     # 여러 장르가 "|"로 연결되어 있으면 첫 번째 장르만 사용
     # 예: 액션|범죄 → 액션
     # --------------------------------------------------------
+
     df["genre"] = (
         df["genre"]
         .fillna("미상")
@@ -60,8 +62,9 @@ def load_data():
     )
 
     # --------------------------------------------------------
-    # 숫자 데이터
+    # 숫자 데이터 변환
     # --------------------------------------------------------
+
     numeric_columns = [
         "first_scrn",
         "first_show",
@@ -76,12 +79,13 @@ def load_data():
             errors="coerce"
         )
 
-    # 총 관객 수가 비어 있으면 0으로 처리
+    # 총 관객 수
     df["total_audi"] = df["total_audi"].fillna(0)
 
     # --------------------------------------------------------
     # 영화명
     # --------------------------------------------------------
+
     df["movieNm"] = (
         df["movieNm"]
         .fillna("영화명 없음")
@@ -139,7 +143,6 @@ st.write(
 )
 
 
-# 장르별 영화 수 계산
 genre_count = (
     df["genre"]
     .value_counts()
@@ -152,7 +155,6 @@ genre_count.columns = [
 ]
 
 
-# 도넛 그래프
 fig1 = px.pie(
     genre_count,
     names="genre",
@@ -162,7 +164,6 @@ fig1 = px.pie(
 )
 
 
-# 마우스를 올렸을 때 표시되는 내용
 fig1.update_traces(
     textposition="inside",
     textinfo="percent",
@@ -186,7 +187,6 @@ st.plotly_chart(
 )
 
 
-# 그래프 1 설명
 with st.container(border=True):
 
     st.markdown("### 💡 이 그래프로 알 수 있는 것")
@@ -212,7 +212,6 @@ st.write(
 )
 
 
-# 트리맵
 fig2 = px.treemap(
     df,
     path=[
@@ -224,7 +223,6 @@ fig2 = px.treemap(
 )
 
 
-# 마우스를 올렸을 때
 fig2.update_traces(
     hovertemplate=(
         "<b>%{label}</b><br>"
@@ -251,7 +249,6 @@ st.plotly_chart(
 )
 
 
-# 그래프 2 설명
 with st.container(border=True):
 
     st.markdown("### 💡 이 그래프로 알 수 있는 것")
@@ -277,7 +274,6 @@ st.write(
 )
 
 
-# 히스토그램
 fig3 = px.histogram(
     df,
     x="total_audi",
@@ -290,7 +286,6 @@ fig3 = px.histogram(
 )
 
 
-# 마우스를 올렸을 때
 fig3.update_traces(
     hovertemplate=(
         "총 관객 구간: %{x}<br>"
@@ -345,7 +340,6 @@ most_audience = df.loc[
 ]
 
 
-# 그래프 3 설명
 with st.container(border=True):
 
     st.markdown("### 💡 이 그래프로 알 수 있는 것")
@@ -365,6 +359,109 @@ with st.container(border=True):
 
 
 # ============================================================
+# 그래프 4
+# 개봉일 스크린 수와 총 관객의 관계 - 산점도
+# ============================================================
+
+st.divider()
+
+st.header("📊 그래프 4. 개봉일 스크린 수와 총 관객의 관계")
+
+st.write(
+    "개봉일에 몇 개의 스크린에서 상영했는지와 "
+    "최종적으로 얼마나 많은 관객을 모았는지의 관계를 나타냅니다."
+)
+
+
+# 산점도에 사용할 데이터
+scatter_df = df[
+    [
+        "movieNm",
+        "genre",
+        "first_scrn",
+        "total_audi"
+    ]
+].copy()
+
+
+# 스크린 수 또는 총 관객이 없는 행 제거
+scatter_df = scatter_df.dropna(
+    subset=[
+        "first_scrn",
+        "total_audi"
+    ]
+)
+
+
+# 음수 값 제거
+scatter_df = scatter_df[
+    (scatter_df["first_scrn"] >= 0)
+    & (scatter_df["total_audi"] >= 0)
+]
+
+
+# ------------------------------------------------------------
+# 산점도
+# ------------------------------------------------------------
+
+fig4 = px.scatter(
+    scatter_df,
+    x="first_scrn",
+    y="total_audi",
+    color="genre",
+    hover_name="movieNm",
+    title="개봉일 스크린 수와 총 관객의 관계",
+    labels={
+        "first_scrn": "개봉일 스크린 수",
+        "total_audi": "총 관객 수",
+        "genre": "장르"
+    },
+    hover_data={
+        "movieNm": False,
+        "genre": True,
+        "first_scrn": ":,.0f",
+        "total_audi": ":,.0f"
+    }
+)
+
+
+fig4.update_traces(
+    marker=dict(
+        size=10,
+        opacity=0.75
+    )
+)
+
+
+fig4.update_layout(
+    height=650,
+    xaxis_title="개봉일 스크린 수",
+    yaxis_title="총 관객 수",
+    legend_title="장르"
+)
+
+
+st.plotly_chart(
+    fig4,
+    use_container_width=True
+)
+
+
+# ------------------------------------------------------------
+# 그래프 4 설명
+# ------------------------------------------------------------
+
+with st.container(border=True):
+
+    st.markdown("### 💡 이 그래프로 알 수 있는 것")
+
+    st.write(
+        "개봉일 스크린 수와 총 관객 수가 어떤 관계를 보이는지 "
+        "영화별로 비교할 수 있으며, 장르에 따라 점의 색이 다르게 나타난다."
+    )
+
+
+# ============================================================
 # 장르별 영화 편수 표
 # ============================================================
 
@@ -373,7 +470,6 @@ st.divider()
 st.subheader("📋 장르별 영화 편수")
 
 
-# 비율 계산
 genre_table = genre_count.copy()
 
 genre_table["비율"] = (
@@ -383,7 +479,6 @@ genre_table["비율"] = (
 ).round(1)
 
 
-# 한글 열 이름으로 변경
 genre_table = genre_table.rename(
     columns={
         "genre": "장르",
