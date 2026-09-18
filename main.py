@@ -573,8 +573,7 @@ sunburst_df = (
 fig7 = px.sunburst(
     sunburst_df,
     path=["nation", "genre"],
-    values="영화편수",
-    hover_data={"영화편수": True}
+    values="영화편수"
 )
 
 fig7.update_traces(
@@ -582,8 +581,13 @@ fig7.update_traces(
 )
 
 st.plotly_chart(fig7, width="stretch")
-st.caption("이 그래프로 알 수 있는 것: 제작 국가별로 어떤 장르의 영화가 많이 만들어졌는지 비교할 수 있다.")
-# ── 그래프 8. 흥행한 영화일수록 10위권에 오래 머물까? ──
+
+st.caption(
+    "이 그래프로 알 수 있는 것: 제작 국가별로 어떤 장르의 영화가 많이 만들어졌는지 비교할 수 있다."
+)
+
+
+# ── 그래프 8. 흥행한 영화일수록 10위권에 오래 머무를까? ──
 question8 = "흥행한 영화일수록 10위권에 머무는 기간도 길까?"
 
 st.header("8. " + question8)
@@ -611,4 +615,6 @@ fig8.update_traces(
 
 st.plotly_chart(fig8, width="stretch")
 
-st.caption("이 그래프로 알 수 있는 것: 총 관객이 많은 영화가 10위권에도 오래 머무르는지 확인할 수 있다.")
+st.caption(
+    "이 그래프로 알 수 있는 것: 총 관객이 많은 영화가 10위권에도 오래 머무르는지 확인할 수 있다."
+)
