@@ -583,3 +583,32 @@ fig7.update_traces(
 
 st.plotly_chart(fig7, width="stretch")
 st.caption("이 그래프로 알 수 있는 것: 제작 국가별로 어떤 장르의 영화가 많이 만들어졌는지 비교할 수 있다.")
+# ── 그래프 8. 흥행한 영화일수록 10위권에 오래 머물까? ──
+question8 = "흥행한 영화일수록 10위권에 머무는 기간도 길까?"
+
+st.header("8. " + question8)
+
+fig8 = px.scatter(
+    df,
+    x="days_in_top10",
+    y="total_audi",
+    hover_name="movieNm",
+    labels={
+        "days_in_top10": "10위권에 머문 날수",
+        "total_audi": "총 관객"
+    },
+    title=question8
+)
+
+fig8.update_traces(
+    hovertemplate=(
+        "<b>%{hovertext}</b><br>"
+        "10위권에 머문 날수: %{x}일<br>"
+        "총 관객: %{y:,}명"
+        "<extra></extra>"
+    )
+)
+
+st.plotly_chart(fig8, width="stretch")
+
+st.caption("이 그래프로 알 수 있는 것: 총 관객이 많은 영화가 10위권에도 오래 머무르는지 확인할 수 있다.")
