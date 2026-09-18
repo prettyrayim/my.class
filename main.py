@@ -542,3 +542,22 @@ with st.container(border=True):
         "영화가 10편 이상인 장르끼리 총 관객 수의 중앙값과 분포, "
         "그리고 다른 영화보다 유난히 관객이 많은 이상치를 비교할 수 있다."
     )
+# ── 그래프 6. 첫 주 관객에 따른 버블 그래프 ──
+st.header("6. 첫 주 관객에 따른 버블 그래프")
+
+fig6 = px.scatter(
+    df,
+    x="first_week_audi",
+    y="total_audi",
+    size="first_week_audi",
+    hover_name="movieNm",
+    hover_data=["first_week_audi", "total_audi"],
+    labels={
+        "first_week_audi": "첫 주 관객",
+        "total_audi": "총 관객"
+    },
+    title="첫 주 관객과 총 관객의 관계"
+)
+
+st.plotly_chart(fig6, width="stretch")
+st.caption("이 그래프로 알 수 있는 것: 첫 주 관객이 많을수록 총 관객도 많은 경향이 있는지 버블의 크기와 위치를 통해 확인할 수 있다.")
