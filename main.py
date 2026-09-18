@@ -561,3 +561,25 @@ fig6 = px.scatter(
 
 st.plotly_chart(fig6, width="stretch")
 st.caption("이 그래프로 알 수 있는 것: 첫 주 관객이 많을수록 총 관객도 많은 경향이 있는지 버블의 크기와 위치를 통해 확인할 수 있다.")
+# ── 그래프 7. 제작 국가 → 장르 (선버스트) ──
+st.header("7. 제작 국가 → 장르 (선버스트)")
+
+sunburst_df = (
+    df.groupby(["nation", "genre"])
+      .size()
+      .reset_index(name="영화편수")
+)
+
+fig7 = px.sunburst(
+    sunburst_df,
+    path=["nation", "genre"],
+    values="영화편수",
+    hover_data={"영화편수": True}
+)
+
+fig7.update_traces(
+    hovertemplate="<b>%{label}</b><br>영화 편수: %{value}편<extra></extra>"
+)
+
+st.plotly_chart(fig7, width="stretch")
+st.caption("이 그래프로 알 수 있는 것: 제작 국가별로 어떤 장르의 영화가 많이 만들어졌는지 비교할 수 있다.")
